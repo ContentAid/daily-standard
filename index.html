@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Standard">
+<meta name="theme-color" content="#0d0b13">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<style>
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body { margin: 0; font: 14px system-ui, sans-serif; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>Daily Standard</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --ground: #0d0b13;
+    --raised: #16121f;
+    --raised-2: #1e1829;
+    --hair: rgba(240, 234, 250, 0.09);
+    --hair-strong: rgba(240, 234, 250, 0.16);
+    --text: #f1ecf9;
+    --muted: #978eac;
+    --faint: #6b6380;
+    --accent: #d9a2ff;
+    --accent-deep: #9a5cc4;
+    --go: #7cefa8;
+    --warn: #ffab94;
+    --l0: #40202e;
+    --l1: #7a4030;
+    --l2: #8a7b36;
+    --l3: #3f9d63;
+    --l4: #7cefa8;
+    --empty: rgba(240, 234, 250, 0.06);
+    --display: "Bricolage Grotesque", Georgia, serif;
+    --body: "IBM Plex Sans", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+    padding-inline: 20px;
+    padding-block: 26px 44px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 560px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+  }
+
+  .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  /* ---- masthead ---- */
+
+  .masthead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .masthead .mark { display: flex; align-items: center; gap: 9px; }
+  .masthead h1 {
+    font-family: var(--display);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent-deep); }
+  #saveState { display: flex; align-items: center; gap: 6px; }
+  #saveState::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--faint); }
+  #saveState.ok::before { background: var(--go); }
+
+  /* ---- hero ---- */
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(120% 140% at 88% -10%, rgba(154, 92, 196, 0.28), transparent 62%), var(--raised);
+    border-radius: 22px;
+    padding: 22px 20px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .hero-top { display: flex; align-items: center; gap: 18px; }
+
+  .ring {
+    position: relative;
+    flex: 0 0 auto;
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: conic-gradient(var(--accent) calc(var(--p) * 1turn), var(--hair) 0);
+  }
+  .ring::after {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border-radius: 50%;
+    background: #17131f;
+  }
+  .ring.met { background: conic-gradient(var(--go) calc(var(--p) * 1turn), var(--hair) 0); }
+  .ring .val {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    line-height: 1;
+  }
+  .ring .num {
+    font-family: var(--display);
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .ring .den { display: block; margin-top: 4px; font-family: var(--mono); font-size: 10px; color: var(--faint); }
+
+  .hero-meta { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .day-name {
+    font-family: var(--display);
+    font-size: 25px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  .day-name .rel { color: var(--accent); font-weight: 400; }
+
+  .pill {
+    align-self: flex-start;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--hair-strong);
+    color: var(--muted);
+  }
+  .pill.met { color: var(--go); border-color: rgba(124, 239, 168, 0.35); }
+
+  .modes { display: flex; gap: 20px; border-top: 1px solid var(--hair); padding-top: 12px; }
+  .modes button {
+    position: relative;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    background: none;
+    border: 0;
+    padding: 6px 0 12px;
+    cursor: pointer;
+  }
+  .modes button[aria-pressed="true"] { color: var(--text); }
+  .modes button[aria-pressed="true"]::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 4px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+
+  /* ---- tasks ---- */
+
+  .tasks { display: flex; flex-direction: column; }
+
+  .task {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    text-align: left;
+    font: 450 16.5px/1.35 var(--body);
+    color: var(--text);
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--hair);
+    padding: 15px 4px;
+    cursor: pointer;
+  }
+  .task:last-of-type { border-bottom: 0; }
+
+  .task .box {
+    flex: 0 0 auto;
+    width: 23px;
+    height: 23px;
+    border: 1.5px solid var(--hair-strong);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+  }
+  .task .box svg { width: 13px; height: 13px; stroke: #1b0f27; stroke-width: 3.2; fill: none; opacity: 0; transform: scale(0.6); }
+  .task[aria-pressed="true"] .box { background: var(--accent); border-color: var(--accent); }
+  .task[aria-pressed="true"] .box svg { opacity: 1; transform: scale(1); }
+  .task[aria-pressed="true"] .text { color: var(--faint); }
+  .task .text { flex: 1; min-width: 0; }
+  .task .idx { font-family: var(--mono); font-size: 11px; color: var(--faint); }
+  .task:hover .box { border-color: var(--accent-deep); }
+
+  /* ---- fun row ---- */
+
+  .fun {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    background: var(--raised);
+    border-radius: 16px;
+    padding: 14px 16px;
+  }
+  .fun .name { font-family: var(--display); font-size: 16px; font-weight: 600; }
+  .fun .sub { font-size: 13px; color: var(--muted); }
+  .fun .sub.over { color: var(--warn); }
+
+  .stepper { display: flex; align-items: center; gap: 4px; }
+  .stepper button {
+    width: 34px; height: 34px;
+    font: 400 19px/1 var(--body);
+    color: var(--muted);
+    background: var(--raised-2);
+    border: 0;
+    border-radius: 11px;
+    cursor: pointer;
+  }
+  .stepper button:hover { color: var(--text); }
+  .stepper .count {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 20px;
+    min-width: 30px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- stats ---- */
+
+  .stats { display: flex; border-top: 1px solid var(--hair); }
+  .stat { flex: 1; display: flex; flex-direction: column; gap: 5px; padding: 16px 0 0; }
+  .stat + .stat { border-left: 1px solid var(--hair); padding-left: 16px; }
+  .stat .n {
+    font-family: var(--display);
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .n.go { color: var(--go); }
+
+  /* ---- calendar ---- */
+
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .cal-scroll { overflow-x: auto; }
+  .cal {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(7, auto);
+    gap: 4px;
+    min-width: 330px;
+  }
+  .months { display: flex; justify-content: space-between; margin-bottom: 7px; min-width: 330px; }
+
+  .cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    background: var(--empty);
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .cell.lv0 { background: var(--l0); }
+  .cell.lv1 { background: var(--l1); }
+  .cell.lv2 { background: var(--l2); }
+  .cell.lv3 { background: var(--l3); }
+  .cell.lv4 { background: var(--l4); }
+  .cell.future { opacity: 0.25; cursor: default; }
+  .cell.today { box-shadow: inset 0 0 0 1.5px var(--accent-deep); }
+  .cell.sel { box-shadow: inset 0 0 0 2px var(--accent); }
+  .cell:hover:not(.future):not(.today):not(.sel) { box-shadow: inset 0 0 0 1.5px var(--hair-strong); }
+
+  .legend { display: flex; align-items: center; gap: 5px; margin-top: 12px; }
+  .legend .key { width: 11px; height: 11px; border-radius: 3px; }
+  .legend .label { letter-spacing: 0.1em; }
+
+  .readout { margin-top: 12px; font-size: 13px; color: var(--muted); min-height: 20px; }
+
+  /* ---- quote ---- */
+
+  .quote { display: flex; flex-direction: column; gap: 14px; }
+  .quote p {
+    font-family: var(--display);
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--text);
+    text-wrap: balance;
+  }
+  .quote p::before { content: "“"; color: var(--accent-deep); }
+  .quote p::after { content: "”"; color: var(--accent-deep); }
+
+  /* ---- buttons, data ---- */
+
+  .ghost {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--hair-strong);
+    border-radius: 999px;
+    padding: 8px 13px;
+    cursor: pointer;
+  }
+  .ghost:hover { color: var(--text); border-color: var(--accent-deep); }
+
+  .data-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; border-top: 1px solid var(--hair); padding-top: 16px; }
+  .data-row .note { flex: 1; min-width: 160px; font-size: 12px; color: var(--faint); }
+
+  #ioBox { display: flex; flex-direction: column; gap: 10px; }
+  #ioText {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 110px;
+    font: 400 12px/1.5 var(--mono);
+    color: var(--muted);
+    background: var(--raised);
+    border: 1px solid var(--hair);
+    border-radius: 12px;
+    padding: 12px;
+    resize: vertical;
+  }
+  #ioActions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #ioMsg { font-size: 12px; color: var(--muted); }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .task .box { transition: background-color .16s ease, border-color .16s ease; }
+    .task .box svg { transition: opacity .16s ease, transform .16s cubic-bezier(.2,.7,.3,1); }
+    .cell { transition: background-color .16s ease, box-shadow .16s ease; }
+    .modes button, .ghost { transition: color .16s ease, border-color .16s ease; }
+    .ring { transition: background .3s cubic-bezier(.3,.8,.3,1); }
+  }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="mark"><span class="dot"></span><h1>Daily Standard</h1></div>
+    <span class="label" id="saveState">this browser</span>
+  </header>
+
+  <section class="hero">
+    <div class="hero-top">
+      <div class="ring" id="ring" style="--p:0">
+        <span class="val"><span class="num" id="scoreNum">0</span><span class="den">of 4</span></span>
+      </div>
+      <div class="hero-meta">
+        <div class="day-name" id="dayName">—</div>
+        <span class="pill" id="statusPill">bare min not met</span>
+      </div>
+    </div>
+    <div class="modes" role="group" aria-label="Standard for this day">
+      <button id="modeFull" aria-pressed="true">Full</button>
+      <button id="modeBare" aria-pressed="false">Bare min</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="tasks" id="tasks"></div>
+  </section>
+
+  <section class="fun">
+    <div>
+      <div class="name">Anime</div>
+      <div class="sub" id="animeSub">1 allowed today</div>
+    </div>
+    <div class="stepper">
+      <button id="animeDown" aria-label="One fewer episode">−</button>
+      <span class="count" id="animeCount">0</span>
+      <button id="animeUp" aria-label="One more episode">+</button>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><span class="label">Streak</span><span class="n" id="statStreak">0</span><span class="label" id="statStreakSub">days at bare min</span></div>
+    <div class="stat"><span class="label">Last 30</span><span class="n" id="statLogged">0</span><span class="label">days logged</span></div>
+    <div class="stat"><span class="label">Full days</span><span class="n" id="statFull">0</span><span class="label">this month</span></div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="label">Six months</span>
+      <button class="ghost" id="todayBtn" hidden>back to today</button>
+    </div>
+    <div class="cal-scroll">
+      <div class="months" id="months"></div>
+      <div class="cal" id="cal"></div>
+    </div>
+    <div class="legend">
+      <span class="label">missed</span>
+      <span class="key lv0" style="background:var(--l0)"></span>
+      <span class="key lv1" style="background:var(--l1)"></span>
+      <span class="key lv2" style="background:var(--l2)"></span>
+      <span class="key lv3" style="background:var(--l3)"></span>
+      <span class="key lv4" style="background:var(--l4)"></span>
+      <span class="label">full day</span>
+    </div>
+    <div class="readout" id="cellInfo">Tap any square to fill in a day you missed.</div>
+  </section>
+
+  <section class="quote">
+    <p id="quoteText"></p>
+    <button class="ghost" id="quoteNext" style="align-self:flex-start">another</button>
+  </section>
+
+  <section class="data-row">
+    <span class="note" id="storeNote">Saved in this browser.</span>
+    <button class="ghost" id="exportBtn">export</button>
+    <button class="ghost" id="importBtn">import</button>
+  </section>
+
+  <section id="ioBox" hidden>
+    <textarea id="ioText" spellcheck="false" aria-label="Tracker data as JSON"></textarea>
+    <div id="ioActions">
+      <button class="ghost" id="mergeBtn">merge into tracker</button>
+      <button class="ghost" id="closeIo">close</button>
+      <span id="ioMsg"></span>
+    </div>
+  </section>
+</div>
+
+<script>
+  const ITEMS = {
+    full: ["3 tasks, 3 blocks", "Workout, eat well", "Read, less dopamine", "8k steps, catchup"],
+    bare: ["1 task, 1 block", "Stretch, eat well", "Read 1 page", "10 min walk"]
+  };
+  const WEIGHT = { full: 1, bare: 0.5 };
+  const QUOTES = [
+    "The bare minimum, done today, beats the perfect plan you start tomorrow.",
+    "Motivation is a passenger. Show up and drive anyway.",
+    "You do not need to feel like it. You need to begin.",
+    "A day you half-did still counts. A day you skipped teaches the skip.",
+    "The block is twenty-five minutes. You have survived worse.",
+    "Discipline is remembering what you want when it stops being fun.",
+    "Small and boring, repeated, outruns big and rare.",
+    "Whatever you are avoiding is the actual task.",
+    "Cheap dopamine now is expensive attention later.",
+    "One page is not a compromise. It is the streak.",
+    "Standards, not moods.",
+    "Finish before you refine.",
+    "The walk fixes more than the worry does.",
+    "You are not behind. You are mid-rep.",
+    "Consistency is a skill, and skills are trained badly at first.",
+    "Do the thing while it is still small.",
+    "Rest is scheduled, not earned by collapse.",
+    "Tomorrow's version of you inherits today's excuse."
+  ];
+  const CHECK = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.6l3.2 3.2L13 4.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  const $ = (id) => document.getElementById(id);
+  const pad = (n) => String(n).padStart(2, "0");
+  const key = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  const parseKey = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
+  const todayKey = () => key(new Date());
+  const addDays = (d, n) => { const c = new Date(d); c.setDate(c.getDate() + n); return c; };
+  const animeAllowance = (k) => { const w = parseKey(k).getDay(); return (w === 0 || w === 6) ? 2 : 1; };
+  const fmt = (n) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
+
+  const LS = "daily-standard-v1";
+  let state = { days: {} };
+  let selected = todayKey();
+  const dirty = new Set();
+
+  function blankDay() { return { m: "full", d: [0, 0, 0, 0], a: 0 }; }
+  function getDay(k) { return state.days[k] || null; }
+  function editDay(k) {
+    if (!state.days[k]) state.days[k] = blankDay();
+    dirty.add(k);
+    return state.days[k];
+  }
+
+  function dayScore(day) {
+    if (!day) return 0;
+    const w = WEIGHT[day.m === "bare" ? "bare" : "full"];
+    return day.d.reduce((s, v) => s + (v ? w : 0), 0);
+  }
+
+  // -1 nothing to show (future, or before tracking began), 0 logged-but-empty, 1..4 rising completion
+  function levelFor(k, firstKey) {
+    const score = dayScore(getDay(k));
+    if (score >= 3.5) return 4;
+    if (score >= 2.5) return 3;
+    if (score >= 1.5) return 2;
+    if (score > 0) return 1;
+    if (k > todayKey() || !firstKey || k < firstKey) return -1;
+    return 0;
+  }
+
+  function firstLoggedKey() {
+    const keys = Object.keys(state.days).sort();
+    return keys.length ? keys[0] : null;
+  }
+
+  // Consecutive days meeting bare min (score >= 2). Today only breaks it once it is over.
+  function streak() {
+    let n = 0;
+    let d = new Date();
+    if (dayScore(getDay(key(d))) < 2) d = addDays(d, -1);
+    while (dayScore(getDay(key(d))) >= 2) { n++; d = addDays(d, -1); }
+    return n;
+  }
+
+  function loggedInLast(n) {
+    let c = 0;
+    for (let i = 0; i < n; i++) if (dayScore(getDay(key(addDays(new Date(), -i)))) > 0) c++;
+    return c;
+  }
+
+  function fullDaysThisMonth() {
+    const now = new Date();
+    const prefix = now.getFullYear() + "-" + pad(now.getMonth() + 1);
+    return Object.keys(state.days).filter(k => k.startsWith(prefix) && dayScore(state.days[k]) >= 3.5).length;
+  }
+
+  /* ---------- storage: localStorage always, private store when published ---------- */
+
+  function readLocal() {
+    try {
+      const raw = localStorage.getItem(LS);
+      if (raw) { const p = JSON.parse(raw); if (p && p.days) state.days = p.days; }
+    } catch (e) { /* private window, blocked storage */ }
+  }
+
+  function writeLocal() {
+    try { localStorage.setItem(LS, JSON.stringify({ days: state.days })); } catch (e) { /* ignore */ }
+  }
+
+  let docRef = null, writeChain = Promise.resolve(), writeTimer = null;
+
+  function setSaveState(text, ok) {
+    $("saveState").textContent = text;
+    $("saveState").classList.toggle("ok", !!ok);
+  }
+
+  function save() {
+    writeLocal();
+    if (!docRef) return;
+    clearTimeout(writeTimer);
+    writeTimer = setTimeout(() => {
+      const body = { days: state.days };
+      writeChain = writeChain
+        .then(() => docRef.set(body))
+        .then(() => setSaveState("synced", true))
+        .catch(() => setSaveState("this browser only", false));
+    }, 700);
+  }
+
+  async function initRemote() {
+    if (!window.claude || !window.claude.use) return;
+    const [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+    if (!db || !user) return;
+    const uid = await user.id();
+    if (!uid) return;
+    docRef = db.doc("data/users/" + uid + "/tracker");
+    $("storeNote").textContent = "Saved to your private store and this browser. Export keeps a copy that outlives both.";
+    docRef.onSnapshot((snap) => {
+      const data = snap.exists ? snap.data() : null;
+      if (data && data.days) {
+        for (const [k, v] of Object.entries(data.days)) if (!dirty.has(k)) state.days[k] = v;
+        writeLocal();
+        render();
+      }
+      setSaveState("synced", true);
+      if (dirty.size) save();
+    }, () => setSaveState("this browser only", false));
+  }
+
+  /* ---------- export / import ---------- */
+
+  function exportText() { return JSON.stringify({ app: "daily-standard", v: 1, days: state.days }, null, 2); }
+
+  function showIo(text, msg) {
+    $("ioBox").hidden = false;
+    $("ioText").value = text;
+    $("ioMsg").textContent = msg || "";
+  }
+
+  $("exportBtn").onclick = async () => {
+    const text = exportText();
+    const name = "daily-standard-" + todayKey() + ".json";
+    const dl = window.claude && window.claude.use ? await claude.use("downloads") : null;
+    if (dl) {
+      try { await dl.save({ filename: name, data: text }); return; }
+      catch (e) { /* declined or unavailable: fall through to copyable text */ }
+    }
+    showIo(text, "Copy this and keep it in a file.");
+  };
+
+  $("importBtn").onclick = () => showIo("", "Paste an exported file here, then merge.");
+  $("closeIo").onclick = () => { $("ioBox").hidden = true; };
+
+  $("mergeBtn").onclick = () => {
+    let parsed;
+    try { parsed = JSON.parse($("ioText").value); }
+    catch (e) { $("ioMsg").textContent = "That is not valid JSON."; return; }
+    if (!parsed || typeof parsed.days !== "object" || !parsed.days) { $("ioMsg").textContent = "No days found in that file."; return; }
+    let n = 0;
+    for (const [k, v] of Object.entries(parsed.days)) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !v || !Array.isArray(v.d)) continue;
+      const incoming = { m: v.m === "bare" ? "bare" : "full", d: v.d.slice(0, 4).map(x => x ? 1 : 0), a: Number(v.a) || 0 };
+      if (dayScore(incoming) >= dayScore(getDay(k))) { state.days[k] = incoming; dirty.add(k); n++; }
+    }
+    $("ioMsg").textContent = n ? "Merged " + n + " day" + (n === 1 ? "" : "s") + "." : "Nothing new to merge.";
+    save();
+    render();
+  };
+
+  /* ---------- render ---------- */
+
+  function dayLabel(k) {
+    const d = parseKey(k);
+    const rel = k === todayKey() ? "today" : k === key(addDays(new Date(), -1)) ? "yesterday" : "";
+    const base = d.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "short" });
+    return base + (rel ? ' <span class="rel">· ' + rel + "</span>" : "");
+  }
+
+  function renderDay() {
+    const k = selected;
+    const day = getDay(k) || blankDay();
+    const score = dayScore(day);
+    $("dayName").innerHTML = dayLabel(k);
+    $("todayBtn").hidden = k === todayKey();
+    $("scoreNum").textContent = fmt(score);
+    $("ring").style.setProperty("--p", score / 4);
+    $("ring").classList.toggle("met", score >= 2);
+    const pill = $("statusPill");
+    pill.classList.toggle("met", score >= 2);
+    pill.textContent = score >= 4 ? "full standard held" : score >= 2 ? "bare min met" : "bare min not met";
+
+    $("modeFull").setAttribute("aria-pressed", String(day.m !== "bare"));
+    $("modeBare").setAttribute("aria-pressed", String(day.m === "bare"));
+
+    const list = ITEMS[day.m === "bare" ? "bare" : "full"];
+    const host = $("tasks");
+    host.innerHTML = "";
+    list.forEach((text, i) => {
+      const b = document.createElement("button");
+      b.className = "task";
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(!!day.d[i]));
+      b.innerHTML = '<span class="box">' + CHECK + '</span><span class="text"></span><span class="idx">' + (i + 1) + "</span>";
+      b.querySelector(".text").textContent = text;
+      b.onclick = () => {
+        const cur = editDay(k);
+        cur.d[i] = cur.d[i] ? 0 : 1;
+        save(); render();
+      };
+      host.appendChild(b);
+    });
+
+    const allow = animeAllowance(k);
+    $("animeCount").textContent = day.a || 0;
+    const over = (day.a || 0) > allow;
+    const sub = $("animeSub");
+    sub.textContent = over ? "over by " + ((day.a || 0) - allow) : allow + " allowed " + (k === todayKey() ? "today" : "this day");
+    sub.classList.toggle("over", over);
+  }
+
+  function renderStats() {
+    const s = streak();
+    const el = $("statStreak");
+    el.textContent = s;
+    el.classList.toggle("go", s >= 3);
+    $("statStreakSub").textContent = s === 1 ? "day at bare min" : "days at bare min";
+    $("statLogged").textContent = loggedInLast(30);
+    $("statFull").textContent = fullDaysThisMonth();
+  }
+
+  const WEEKS = 26;
+  const cells = new Map();
+
+  // Built once. A tick repaints classes only, so the grid never reflows.
+  function buildCal() {
+    const cal = $("cal");
+    const months = $("months");
+    cal.innerHTML = "";
+    months.innerHTML = "";
+    cells.clear();
+    const end = addDays(new Date(), 6 - new Date().getDay()); // end of this week (Saturday)
+    const start = addDays(end, -(WEEKS * 7 - 1));
+    let lastMonth = -1;
+    for (let w = 0; w < WEEKS; w++) {
+      const d = addDays(start, w * 7);
+      const span = document.createElement("span");
+      span.className = "label";
+      span.textContent = d.getMonth() !== lastMonth && d.getDate() <= 7 ? d.toLocaleDateString(undefined, { month: "short" }) : "";
+      if (span.textContent) lastMonth = d.getMonth();
+      months.appendChild(span);
+    }
+    const t = todayKey();
+    for (let i = 0; i < WEEKS * 7; i++) {
+      const d = addDays(start, i);
+      const k = key(d);
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "cell";
+      if (k <= t) {
+        cell.onclick = () => {
+          selected = k;
+          $("cellInfo").textContent = d.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })
+            + " \u00b7 " + fmt(dayScore(getDay(k))) + " of 4 \u00b7 " + ((getDay(k) || {}).a || 0) + " ep.";
+          render();
+        };
+      }
+      cells.set(k, cell);
+      cal.appendChild(cell);
+    }
+  }
+
+  function paintCal() {
+    const first = firstLoggedKey();
+    const t = todayKey();
+    for (const [k, cell] of cells) {
+      const lv = levelFor(k, first);
+      cell.className = "cell" + (lv >= 0 ? " lv" + lv : "") + (k > t ? " future" : "") + (k === t ? " today" : "") + (k === selected ? " sel" : "");
+      const title = k + " \u00b7 " + fmt(dayScore(getDay(k))) + "/4";
+      cell.title = title;
+      cell.setAttribute("aria-label", title);
+    }
+  }
+
+  function render() { renderDay(); renderStats(); paintCal(); }
+
+  /* ---------- controls ---------- */
+
+  $("modeFull").onclick = () => { editDay(selected).m = "full"; save(); render(); };
+  $("modeBare").onclick = () => { editDay(selected).m = "bare"; save(); render(); };
+  $("animeUp").onclick = () => { const c = editDay(selected); c.a = (c.a || 0) + 1; save(); render(); };
+  $("animeDown").onclick = () => { const c = editDay(selected); c.a = Math.max(0, (c.a || 0) - 1); save(); render(); };
+  $("todayBtn").onclick = () => { selected = todayKey(); render(); };
+
+  function hashOf(s) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
+  let quoteIdx = hashOf(todayKey()) % QUOTES.length;
+  const showQuote = () => { $("quoteText").textContent = QUOTES[quoteIdx]; };
+  $("quoteNext").onclick = () => { quoteIdx = (quoteIdx + 1 + Math.floor(Math.random() * (QUOTES.length - 1))) % QUOTES.length; showQuote(); };
+
+  /* ---------- boot ---------- */
+
+  readLocal();
+  showQuote();
+  buildCal();
+  render();
+  initRemote();
+
+  // self-check: scoring, level thresholds, streak walk
+  (function selfTest() {
+    const keep = state.days;
+    state.days = {};
+    console.assert(dayScore({ m: "full", d: [1, 1, 1, 1] }) === 4, "full day scores 4");
+    console.assert(dayScore({ m: "bare", d: [1, 1, 1, 1] }) === 2, "bare day scores 2");
+    const t = todayKey(), y = key(addDays(new Date(), -1)), y2 = key(addDays(new Date(), -2));
+    state.days[t] = { m: "bare", d: [1, 1, 1, 1], a: 0 };
+    state.days[y] = { m: "full", d: [1, 1, 1, 1], a: 0 };
+    state.days[y2] = { m: "full", d: [1, 0, 0, 0], a: 0 };
+    console.assert(levelFor(t, t) === 2, "bare-perfect is mid green");
+    console.assert(levelFor(y, y2) === 4, "full-perfect is top green");
+    console.assert(levelFor(y2, y2) === 1, "one of four is low");
+    console.assert(streak() === 2, "streak counts today + yesterday, stops at 1/4");
+    state.days = keep;
+  })();
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  }
+</script>
+</body>
+</html>
