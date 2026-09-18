@@ -1,5 +1,5 @@
 // Stale-while-revalidate: the page opens from cache instantly, then quietly updates.
-const CACHE = "daily-standard-v1";
+const CACHE = "daily-standard-v2";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
